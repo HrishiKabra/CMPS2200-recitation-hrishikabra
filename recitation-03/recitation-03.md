@@ -111,74 +111,54 @@ following:
 a) Describe, in your own words, what the `combine` method is doing and
 what it returns.
 
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
+- The `combine` method takes two sorted lists (`left_ranks` and `right_ranks`) and merges them into one sorted list
+- During the merge process, it identifies and counts disagreements between elements from the two lists
+- A disagreement occurs when an element from the right list is smaller than an element from the left list
+- When such a disagreement is found, it counts ALL remaining elements in the left list as disagreements with that right element
+- This approach works because both input lists are already sorted, so if right[j] $<$ left[i], then right[j] is also less than all elements left[i+1], left[i+2], etc.
+- The method returns both the total count of disagreements and the merged sorted list
 
 b) Write the work recurrence formula for `num_disagreements_fast`. Please explain how do you have this.
 
-.  
-.  
-.  
-.  
-.  
-.  
+- $W(n) = 2W(\frac{n}{2}) + O(n)$
+- At each recursive level, we divide the problem into two subproblems of size $\frac{n}{2}$, giving us $2W(\frac{n}{2})$
+- The combine operation performs a linear scan through both lists, resulting in $O(n)$ work per call
+- The recursive calls operate on each half independently, and the work outside recursion (splitting and merging) is $O(n)$
+
 
 c) Solve this recurrence using any method you like. Please explain how do you have this.
 
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
+- The solution is $W(n) = O(n log n)$
+- At the top level, we perform $n$ work
+- At the next level, we have two subproblems of size $\frac{n}{2}$, so the work is $2 × \frac{n}{2} = n$
+- This pattern continues: at each level, the total work remains $n$
+- The recursion tree has $log_2 n$ levels total
+- Therefore, the total work is $n × log_2 n = O(n log n)$
 
 
 d) Assuming that your recursive calls to `num_disagreements_fast` are
 done in parallel, write the span recurrence for your algorithm. Please explain how do you have this.
 
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
+- $S(n) = S(\frac{n}{2}) + O(n)$
+- The span considers only the longest path through the computation when executed in parallel
+- Since the recursive calls run simultaneously, we only need to account for one branch: $S(\frac{n}{2})$
+- The key difference from work is that we don't multiply by 2, as both recursive calls happen concurrently
 
 e) Solve this recurrence using any method you like. Please explain how do you have this.
 
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
-.  
+- Solving this recurrence: $n + \frac{n}{2} + \frac{n}{4} + ... = O(n)$
+- This forms a geometric series that converges to $O(n)$
+- Asymptotically, the dominant term is $O(n)$, so $S(n) = O(n)$
+- The constant factors don't affect the asymptotic complexity
 
 f) If `ranks` is a list of size n, Netflix says it will give you
 lg(n) processors to run your algorithm in parallel. What is the
 upper bound on the runtime of this parallel implementation? (Hint: assume a Greedy
 Scheduler). Please explain how do you have this.
+
+- Using Brent's Theorem with a greedy scheduler: $T_p ≤ \frac{W}{p} + S$ where $p = log(n)$ processors
+- We have $W = O(n log n)$ and $S = O(n)$
+- Substituting: $T_p ≤ \frac{n log n}{log n} + n = n + n = 2n$
+- Asymptotically, $2n = O(n)$, so the upper bound runtime is $O(n)$
+
 
